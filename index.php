@@ -5,6 +5,7 @@
 // @created 29.08.2009
 $hostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 $text = (!empty($_POST['t'])) ? $_POST['t'] : $hostname;
+$msg = (!empty($_POST['m'])) ? $_POST['m'] : '';
 
 $r = (is_numeric($_POST['r'])) ? $_POST['r'] : round(rand(1,255));
 $g = (is_numeric($_POST['g'])) ? $_POST['g'] : round(rand(1,255));
@@ -24,7 +25,7 @@ if (!empty($_POST))
   
   imagefill($im, 0, 0, $bg_color);
   
-  putenv("GDFONTPATH=" . realpath('.'));
+  putenv('GDFONTPATH=' . realpath('.'));
   $y = ($height/2)-($font_size/2)+25;
   $x = $font_size*1.5;
   
@@ -32,8 +33,9 @@ if (!empty($_POST))
   $grey = imagecolorallocate($im, 28, 28, 28);
   imagettftext($im, $font_size, 0, $x+1, $y+1, $grey, $font, $text);
   imagettftext($im, $font_size, 0, $x, $y, $text_color, $font, $text);
+  imagettftext($im, 12, 0, $x, $y+20, $text_color, $font, $msg);
   
-  header("Content-type: image/png");
+  header('Content-type: image/png');
   imagepng($im);
   imagedestroy($im);
   exit();
@@ -47,8 +49,19 @@ if (!empty($_POST))
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-	<title>Desklabel</title>
+  <script type="text/javascript" charset="utf-8">
+    function doIt() {
+      if (event.shiftKey == 1) {
+        // Super-secret grey-click ;-)
+        document.getElementById('r').value = 60;
+        document.getElementById('g').value = 60;
+        document.getElementById('b').value = 60;
+      }
+      return true;
+    }
+  </script>
+  
+	<title>desklabel</title>
 	<style type="text/css" media="screen">
 	  body {
 	    padding: 40px; margin: 40px;
@@ -75,8 +88,10 @@ if (!empty($_POST))
 
 <form action="#" method="post" accept-charset="utf-8" target="_blank">
     
-  <label>text</label>
+  <label>title</label>
   <input type="text" name="t" value="<?= $text; ?>" style="width:500px"/>
+  <label>text</label>
+  <input type="text" name="m" style="width:500px"/>
   <br/>
   <input type="text" name="w" id="w" title="Width"/>
   x
@@ -84,10 +99,10 @@ if (!empty($_POST))
   @
   <input type="text" name="font_size" value="52" id="font_size" title="Font Size"/>
   .
-  <input type="text" name="r" value="<?= $r ?>" style="width:50px"/>R
-  <input type="text" name="g" value="<?= $g ?>" style="width:50px"/>G
-  <input type="text" name="b" value="<?= $b ?>" style="width:50px"/>B
-  <p><input type="submit" value="Do it!" style="float:right"/></p>
+  <input type="text" name="r" id="r" value="<?= $r ?>" style="width:50px"/>R
+  <input type="text" name="g" id="g" value="<?= $g ?>" style="width:50px"/>G
+  <input type="text" name="b" id="b" value="<?= $b ?>" style="width:50px"/>B
+  <p><input type="submit" value="Do it!" style="float:right" onclick="return doIt()"/></p>
   
 </form>
 <script type="text/javascript" charset="utf-8">
